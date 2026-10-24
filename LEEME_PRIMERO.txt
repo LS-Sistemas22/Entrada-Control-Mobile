@@ -1,0 +1,24 @@
+ENTRADA CONTROL - LS SISTEMAS | PROYECTO ANDROID PARA CREAR APK
+
+Este ZIP contiene un proyecto Android real. NO es una APK todavía.
+
+PARA COMPILAR COMO HICIMOS CON KIOSCO CONTROL:
+1. Descomprimí este ZIP.
+2. En GitHub, creá un repositorio para Entrada Control (puede ser privado).
+3. Subí a la RAÍZ del repositorio TODO el contenido de la carpeta descomprimida:
+   la carpeta app, build.gradle, settings.gradle, gradle.properties y la carpeta .github.
+   Ojo: .github comienza con punto; asegurate de subirla también.
+4. Entrá en la pestaña Actions de GitHub. Ejecutá "Compilar APK - Entrada Control" si no comenzó sola.
+5. Cuando termine correctamente, abrí la ejecución y descargá el archivo de Artifacts:
+   Entrada-Control-LS-Sistemas-APK. Adentro está app-debug.apk.
+6. Copiá esa APK al celular Android e instalala.
+
+ÍCONO: EC naranja y LS SISTEMAS blanco sobre fondo oscuro.
+NOMBRE: Entrada Control.
+USO: no necesita conexión para registrar entradas ni generar PDFs.
+INFORMES: en Android 10+ se guardan en Descargas / Entrada Control.
+RESPALDOS: la APK tiene almacenamiento propio. Si estabas usando el HTML,
+exportá una copia JSON desde el HTML y restaurala en la APK; no se importan solos.
+
+NOTA: Proyecto preparado para compilar con GitHub Actions; la compilación real
+no se realizó en este entorno. Las funciones deben probarse en el celular.
