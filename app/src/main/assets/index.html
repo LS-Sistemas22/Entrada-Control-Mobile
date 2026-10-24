@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#111318">
+<title>Entrada Control · LS Sistemas</title>
+<style>
+:root{--bg:#101216;--panel:#1b1f26;--gold:#f5bd4f;--muted:#aeb5c0;--green:#078447;--blue:#1769e8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f7f7f7;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:20px 16px 15px;text-align:center;background:#08090b;border-bottom:1px solid #2a2e35}
+.brand{font-weight:900;font-size:25px;letter-spacing:2px;color:var(--gold)}.subtitle{font-size:12px;letter-spacing:3px;color:#ddd;margin-top:3px}
+main{max-width:540px;margin:auto;padding:14px}
+.card{background:var(--panel);border:1px solid #2d333d;border-radius:15px;padding:15px;margin-bottom:13px}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+input{width:100%;font-size:20px;background:#11151b;border:1px solid #424956;border-radius:10px;color:white;padding:11px}
+.priceRow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+button{border:0;border-radius:12px;font-weight:800;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+button:active{transform:scale(.96);filter:brightness(1.18)}
+.smallbtn{background:var(--gold);color:#151515;padding:12px 14px;font-size:14px}
+h2{font-size:16px;margin:0 0 12px}
+.qty{display:flex;align-items:center;justify-content:center;gap:24px;margin:12px 0 16px}
+.qty button{width:50px;height:50px;font-size:27px;background:#262c35;border:1px solid var(--gold);color:var(--gold)}
+#qty{font-size:34px;font-weight:900;min-width:45px;text-align:center}
+.paygrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pay{position:relative;overflow:hidden;padding:20px 8px;min-height:105px;color:white;font-size:16px;line-height:1.35;transition:transform .1s,filter .1s,box-shadow .1s}
+.pay.tap-ok{transform:scale(.97);filter:brightness(1.22);box-shadow:0 0 0 3px #f5bd4f}
+.pay.tap-ok::after{content:"✓ REGISTRADO";position:absolute;inset:0;display:grid;place-items:center;border-radius:inherit;background:rgba(0,0,0,.72);color:white;font-size:17px;font-weight:900;letter-spacing:.7px}
+.pay:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.cash{background:#087844}.transfer{background:#1769e8}.advance{grid-column:1/-1;background:#ad7620;color:#141414;min-height:68px;padding:15px}.free{grid-column:1/-1;background:#343941;min-height:65px;padding:15px}
+.payHint{text-align:center;color:var(--muted);font-size:12px;margin:10px 0 0}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.stat{padding:13px;border-radius:12px;background:#101419;border:1px solid #343a44}
+.stat .k{font-size:11px;color:var(--muted);text-transform:uppercase;line-height:1.3}.stat .v{font-size:22px;font-weight:900;margin-top:6px;overflow-wrap:anywhere}
+.gold{color:var(--gold)}.wide{width:100%;padding:13px;background:#2b3038;color:white;font-size:14px;margin-top:8px}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:10px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px 4px;text-align:left;border-bottom:1px solid #353a43}th{color:var(--muted);font-size:11px}
+.history{max-height:250px;overflow:auto}.tag{padding:4px 7px;border-radius:7px;font-size:11px;font-weight:800;white-space:nowrap}.tag.cash{background:#087844}.tag.transfer{background:#1769e8}.tag.advance{background:#ad7620;color:#141414}.tag.free{background:#434a55}
+.footer{color:#7f8794;text-align:center;font-size:11px;padding:8px 12px 24px}
+#notice{display:none;position:fixed;z-index:20;left:50%;bottom:22px;transform:translateX(-50%);width:calc(100% - 28px);max-width:520px;background:#183e2b;border:1px solid #2b8753;padding:14px;border-radius:11px;font-size:14px;box-shadow:0 8px 30px #000a;text-align:center}
+
+/* Informes A4 y noches guardadas */
+.reportBtn{background:#f5bd4f;color:#151515;font-size:15px;padding:15px}
+.nightBtn{background:#a12d36;color:#fff;font-size:15px;padding:15px}
+.archive{margin-top:4px}.archive summary{list-style:none;cursor:pointer;font-weight:800;font-size:15px;padding:4px 0}
+.archive summary::-webkit-details-marker{display:none}.archive summary::before{content:"▸ ";color:var(--gold)}.archive[open] summary::before{content:"▾ "}
+.archiveList{margin-top:12px}.archiveItem{padding:12px;background:#11151b;border:1px solid #353a43;border-radius:11px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.archiveItem .date{font-weight:750;font-size:14px}.archiveItem .mini{color:var(--muted);font-size:12px;margin-top:4px}
+.archiveItem button{background:#303946;color:white;padding:11px 12px;font-size:12px;flex-shrink:0}
+.sectionHelp{color:var(--muted);font-size:12px;line-height:1.5;margin:8px 0 0}
+@media(min-width:420px){.paygrid .advance,.paygrid .free{min-height:65px}}
+</style>
+</head>
+<body>
+<header><div class="brand">ENTRADA CONTROL</div><div class="subtitle">LS SISTEMAS</div></header>
+<main>
+<div id="notice"></div>
+<section class="card">
+ <h2>Precio de la entrada</h2>
+ <div class="priceRow"><div><label for="price">Precio por persona ($)</label><input id="price" type="number" min="0" step="100" value="5000" inputmode="decimal"></div><button class="smallbtn" id="savePrice">GUARDAR</button></div>
+ <h2 style="margin-top:18px;text-align:center">Cantidad de personas</h2>
+ <div class="qty"><button id="minus" aria-label="Restar">−</button><div id="qty">1</div><button id="plus" aria-label="Sumar">+</button></div>
+ <div class="paygrid">
+  <button class="pay cash" id="cashBtn">💵<br>ENTRADA<br>EFECTIVO</button>
+  <button class="pay transfer" id="transferBtn">📱<br>ENTRADA<br>TRANSFERENCIA</button>
+  <button class="pay advance" id="advanceBtn">🎟️ &nbsp; ENTRADA ANTICIPADA</button>
+  <button class="pay free" id="freeBtn">👤 &nbsp; ENTRADA GRATIS</button>
+ </div>
+ <p class="payHint">Anticipadas: cuentan las personas, no suman dinero a caja.</p>
+</section>
+<section class="card">
+ <div class="topline"><h2>Resumen de hoy</h2><span style="font-size:12px;color:var(--muted)" id="sessionDate"></span></div>
+ <div class="stats">
+  <div class="stat"><div class="k">Personas ingresadas</div><div class="v" id="people">0</div></div>
+  <div class="stat"><div class="k">Recaudación total</div><div class="v gold" id="total">$ 0</div></div>
+  <div class="stat"><div class="k">Efectivo</div><div class="v" id="cashTotal">$ 0</div></div>
+  <div class="stat"><div class="k">Transferencia</div><div class="v" id="transferTotal">$ 0</div></div>
+  <div class="stat"><div class="k">Pagaron</div><div class="v" id="paidPeople">0</div></div>
+  <div class="stat"><div class="k">Entraron gratis</div><div class="v" id="freePeople">0</div></div>
+  <div class="stat"><div class="k">Con anticipada</div><div class="v" id="advancePeople">0</div></div>
+ </div>
+ <button class="wide reportBtn" id="pdfBtn">📄 DESCARGAR INFORME PDF · A4</button>
+ <button class="wide nightBtn" id="newNight">✓ CERRAR NOCHE Y GUARDAR PDF</button>
+ <p class="sectionHelp">El PDF incluye resumen, importes por medio de pago y todos los movimientos, incluso los anulados. Se guarda en Descargas.</p>
+ <button class="wide" id="exportBtn">⬇ Guardar copia de seguridad</button>
+ <button class="wide" id="importBtn">↥ Restaurar copia de seguridad</button>
+ <input type="file" id="importFile" accept="application/json,.json" style="display:none">
+ <button class="wide" id="csvBtn">▤ Exportar reporte de la noche</button>
+ <button class="wide" id="undoBtn">↶ Anular último registro</button>
+</section>
+<section class="card">
+ <div class="topline"><h2>Últimos ingresos</h2><span id="count" style="font-size:12px;color:var(--muted)">0 registros</span></div>
+ <div class="history"><table><thead><tr><th>Hora</th><th>Personas</th><th>Pago</th><th>Total</th></tr></thead><tbody id="history"></tbody></table></div>
+</section>
+<section class="card">
+ <details class="archive" id="archiveDetails">
+  <summary id="archiveTitle">Noches anteriores (0)</summary>
+  <div class="archiveList" id="archiveList"></div>
+ </details>
+</section>
+<div class="footer">Los datos se guardan en este dispositivo. Exportá una copia al terminar cada evento.</div>
+</main>
+<script>
+const KEY='caribbean_pub_entradas_v1'; // Conservar la clave para no perder los registros existentes.
+let state={price:5000,entries:[],archive:[],night:new Date().toLocaleDateString('es-AR')};
+let qty=1,lastRegisterAt=0,noticeTimer;
+const $=id=>document.getElementById(id);
+const localDate=d=>new Date(d).toLocaleDateString('es-AR');
+const localTime=d=>new Date(d).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',hour12:false});
+const fmt=n=>'$ '+Number(n||0).toLocaleString('es-AR',{maximumFractionDigits:2});
+function show(msg){$('notice').textContent=msg;$('notice').style.display='block';clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>$('notice').style.display='none',2600)}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));return true}catch(e){show('Error al guardar. Exportá una copia de seguridad.');return false}}
+function load(){
+ try{
+  const raw=localStorage.getItem(KEY);
+  if(raw){const data=JSON.parse(raw);state={...state,...data};}
+  if(!Array.isArray(state.entries))state.entries=[];
+  if(!Array.isArray(state.archive))state.archive=[];
+ }catch(e){show('No se pudieron leer los datos guardados.');}
+ $('price').value=state.price;render();
+}
+function tapFeedback(method){const buttons={Efectivo:'cashBtn',Transferencia:'transferBtn',Anticipada:'advanceBtn',Gratis:'freeBtn'};const btn=$(buttons[method]);btn.classList.remove('tap-ok');void btn.offsetWidth;btn.classList.add('tap-ok');clearTimeout(btn.feedbackTimer);btn.feedbackTimer=setTimeout(()=>btn.classList.remove('tap-ok'),650)}
+function setQty(n){qty=Math.max(1,Math.min(100,n));$('qty').textContent=qty}
+function register(method){
+ // Bloqueo breve de dobles toques involuntarios. No muestra preguntas al registrar.
+ const now=Date.now();if(now-lastRegisterAt<350)return;
+ const price=Number(state.price)||0;
+ if(method!=='Gratis'&&method!=='Anticipada'&&price<=0){show('Primero ingresá un precio válido.');return}
+ const total=(method==='Gratis'||method==='Anticipada')?0:price*qty;
+ const entry={id:now,time:new Date().toISOString(),qty,price:total?price:0,method,total};
+ state.entries.push(entry);
+ if(!save()){state.entries.pop();return}
+ lastRegisterAt=now;setQty(1);render();tapFeedback(method);
+ if(navigator.vibrate)navigator.vibrate(45);
+ show(`✓ ${entry.qty} persona(s) · ${method}${method==='Anticipada'?' (ya pagada)':` · ${fmt(total)}`}`);
+}
+const validEntries=items=>(Array.isArray(items)?items:[]).filter(e=>e&&typeof e==='object');
+function calc(items){
+ const result={people:0,paid:0,free:0,advance:0,cash:0,transfer:0,voided:0,ops:0,categories:{}};
+ for(const method of ['Efectivo','Transferencia','Anticipada','Gratis'])result.categories[method]={people:0,operations:0,amount:0};
+ validEntries(items).forEach(e=>{
+  if(e.void){result.voided++;return}
+  const quantity=Number(e.qty)||0,amount=Number(e.total)||0,method=e.method;
+  const c=result.categories[method]||result.categories.Gratis;
+  c.people+=quantity;c.operations++;c.amount+=amount;
+  result.people+=quantity;result.ops++;
+  if(method==='Efectivo'){result.cash+=amount;result.paid+=quantity}
+  else if(method==='Transferencia'){result.transfer+=amount;result.paid+=quantity}
+  else if(method==='Anticipada'){result.advance+=quantity;result.paid+=quantity}
+  else result.free+=quantity;
+ });
+ result.total=result.cash+result.transfer;return result;
+}
+function active(){return validEntries(state.entries).filter(e=>!e.void)}
+function render(){
+ const s=calc(state.entries),es=active();
+ $('people').textContent=s.people;$('total').textContent=fmt(s.total);
+ $('cashTotal').textContent=fmt(s.cash);$('transferTotal').textContent=fmt(s.transfer);
+ $('paidPeople').textContent=s.paid;$('freePeople').textContent=s.free;
+ $('advancePeople').textContent=s.advance;$('count').textContent=es.length+' registros';
+ $('sessionDate').textContent=state.night||'';
+ $('history').innerHTML=es.slice().reverse().slice(0,35).map(e=>{
+  const cls=e.method==='Efectivo'?'cash':e.method==='Transferencia'?'transfer':e.method==='Anticipada'?'advance':'free';
+  const safeMethod=String(e.method||'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
+  return `<tr><td>${localTime(e.time)}</td><td>${Number(e.qty)||0}</td><td><span class="tag ${cls}">${safeMethod}</span></td><td>${e.method==='Anticipada'?'Ya pagada':fmt(e.total)}</td></tr>`;
+ }).join('');
+ renderArchive();
+}
+function renderArchive(){
+ const nights=state.archive||[];
+ $('archiveTitle').textContent=`Noches anteriores (${nights.length})`;
+ const list=$('archiveList');list.textContent='';
+ if(!nights.length){const msg=document.createElement('p');msg.className='sectionHelp';msg.textContent='Todavía no hay noches cerradas.';list.appendChild(msg);return}
+ nights.slice().reverse().forEach((night,i)=>{
+  const index=nights.length-1-i,sum=calc(night.entries),row=document.createElement('div');row.className='archiveItem';
+  const info=document.createElement('div'),date=document.createElement('div'),mini=document.createElement('div');
+  date.className='date';date.textContent='Noche del '+(night.night||'sin fecha');
+  mini.className='mini';mini.textContent=`${sum.people} personas · ${fmt(sum.total)} en puerta`;
+  info.append(date,mini);const btn=document.createElement('button');btn.textContent='PDF A4';
+  btn.onclick=()=>exportNightPdf(night);row.append(info,btn);list.appendChild(row);
+ });
+}
+$('minus').onclick=()=>setQty(qty-1);$('plus').onclick=()=>setQty(qty+1);
+$('savePrice').onclick=()=>{
+ const p=Number($('price').value);
+ if(!Number.isFinite(p)||p<0){show('Ingresá un precio válido.');return}
+ const old=state.price;state.price=p;if(!save()){state.price=old;return}show('Precio actualizado.');
+};
+$('cashBtn').onclick=()=>register('Efectivo');$('transferBtn').onclick=()=>register('Transferencia');
+$('advanceBtn').onclick=()=>register('Anticipada');$('freeBtn').onclick=()=>register('Gratis');
+$('undoBtn').onclick=()=>{
+ const e=state.entries.slice().reverse().find(x=>!x.void);
+ if(!e){show('No hay registros para anular.');return}
+ if(!confirm(`¿Anular el último registro (${e.qty} persona(s), ${e.method})?`))return;
+ e.void=true;if(!save()){delete e.void;return}render();show('Último registro anulado.');
+};
+function dateFile(night){return String(night||localDate(new Date())).replace(/[\\/:*?"<>|\s]+/g,'-').replace(/-+/g,'-')}
+function download(blob,name){
+ // Dentro del APK guardamos los archivos con el sistema de Android.
+ if(window.EntradaAndroid && typeof window.EntradaAndroid.saveFile==='function'){
+  const reader=new FileReader();
+  reader.onload=()=>{
+   try {window.EntradaAndroid.saveFile(String(reader.result),name,blob.type||'application/octet-stream');}
+   catch(e){console.error(e);show('Error al enviar archivo a Android.');}
+  };
+  reader.onerror=()=>show('No se pudo preparar la descarga.');
+  reader.readAsDataURL(blob);
+  return;
+ }
+ const a=document.createElement('a'),url=URL.createObjectURL(blob);
+ a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),30000);
+}
+$('exportBtn').onclick=()=>download(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),`entrada_control_copia_${dateFile(localDate(new Date()))}.json`);
+$('importBtn').onclick=()=>$('importFile').click();
+$('importFile').onchange=async ev=>{
+ const file=ev.target.files&&ev.target.files[0];if(!file)return;
+ try{
+  const data=JSON.parse(await file.text());
+  if(!data||!Array.isArray(data.entries)||!Number.isFinite(Number(data.price))||Number(data.price)<0)throw Error('Copia inválida');
+  if(data.archive!==undefined&&!Array.isArray(data.archive))throw Error('Archivo inválido');
+  if(!confirm('¿Restaurar esta copia? Reemplazará los registros y noches guardadas que hay actualmente en esta versión.'))return;
+  const before=state;
+  state={price:Number(data.price),entries:data.entries,archive:data.archive||[],night:String(data.night||localDate(new Date()))};
+  if(!save()){state=before;return}
+  $('price').value=state.price;render();show('Copia restaurada correctamente.');
+ }catch(e){show('La copia no es válida. Seleccioná el archivo JSON generado por esta aplicación.');}
+ finally{ev.target.value='';}
+};
+$('csvBtn').onclick=()=>{
+ const rows=[['Fecha','Hora','Personas','Precio unitario','Medio de pago','Total','Anulado']];
+ state.entries.forEach(e=>{const d=new Date(e.time);rows.push([localDate(d),localTime(d),e.qty,e.price,e.method,e.total,e.void?'Sí':'No'])});
+ const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(';')).join('\r\n');
+ download(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),`entrada_control_reporte_${dateFile(state.night)}.csv`);
+};
+
+/* PDF A4 autocontenido (sin internet ni bibliotecas externas). Fuentes PDF estándar Helvetica. */
+function pdfEsc(value){
+ const replace={'\u2013':'-','\u2014':'-','\u2018':"'",'\u2019':"'",'\u201c':'"','\u201d':'"','\u00a0':' ','\u2022':'-','\u20ac':'EUR','\u2713':'OK'};
+ return String(value==null?'':value).replace(/[^\x20-\x7e\u00a0-\u00ff]/g,c=>replace[c]||' ').replace(/[\\()]/g,'\\$&');
+}
+function binaryPDF(pages){
+ const objects=[''];const add=s=>{objects.push(s);return objects.length-1};
+ const root=add(''),allPages=add('');
+ const font=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
+ const bold=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
+ const pageRefs=[];
+ for(const instructions of pages){
+  const stream=add(`<< /Length ${instructions.length} >>\nstream\n${instructions}\nendstream`);
+  pageRefs.push(add(`<< /Type /Page /Parent ${allPages} 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 ${font} 0 R /F2 ${bold} 0 R >> >> /Contents ${stream} 0 R >>`));
+ }
+ objects[allPages]=`<< /Type /Pages /Count ${pageRefs.length} /Kids [${pageRefs.map(i=>i+' 0 R').join(' ')}] >>`;
+ objects[root]=`<< /Type /Catalog /Pages ${allPages} 0 R >>`;
+ let out='%PDF-1.4\n%\xE2\xE3\xCF\xD3\n';const offsets=[0];
+ for(let i=1;i<objects.length;i++){offsets[i]=out.length;out+=`${i} 0 obj\n${objects[i]}\nendobj\n`}
+ const xref=out.length;
+ out+=`xref\n0 ${objects.length}\n0000000000 65535 f \n`;
+ for(let i=1;i<objects.length;i++)out+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';
+ out+=`trailer\n<< /Size ${objects.length} /Root ${root} 0 R >>\nstartxref\n${xref}\n%%EOF`;
+ return new Blob([Uint8Array.from(out,ch=>ch.charCodeAt(0)&255)],{type:'application/pdf'});
+}
+function buildNightPdf(night){
+ const entries=validEntries(night.entries),sum=calc(entries),pages=[];
+ const W=595.28,H=841.89,M=39,RIGHT=556,ink=[0.11,.13,.17],muted=[.4,.45,.51],gold=[.92,.67,.24],pale=[.97,.97,.98];
+ let commands=[],y=0;
+ const color=c=>c.map(v=>Number(v).toFixed(3)).join(' ');
+ function rect(x,t,w,h,c){commands.push(`${color(c)} rg ${x.toFixed(2)} ${(H-t-h).toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)} re f`)}
+ function line(x1,t1,x2,t2,c=[.85,.87,.90],weight=.7){commands.push(`${color(c)} RG ${weight} w ${x1.toFixed(2)} ${(H-t1).toFixed(2)} m ${x2.toFixed(2)} ${(H-t2).toFixed(2)} l S`)}
+ function text(x,t,string,size=10,b=false,c=ink){commands.push(`BT /${b?'F2':'F1'} ${size} Tf ${color(c)} rg 1 0 0 1 ${x.toFixed(2)} ${(H-t).toFixed(2)} Tm (${pdfEsc(string)}) Tj ET`)}
+ function page(){if(commands.length)pages.push(commands.join('\n'));commands=[];y=0}
+ function header(subtitle){
+  rect(0,0,W,101,ink);rect(0,99,W,3,gold);
+  text(M,39,'ENTRADA CONTROL',20,true,[1,1,1]);
+  text(M,60,'LS SISTEMAS',11,true,gold);
+  text(M,79,'CIERRE DE ENTRADAS - Informe de control de acceso',9,false,[.83,.85,.88]);
+  text(437,37,'FORMATO A4',10,true,[1,1,1]);
+  text(437,54,subtitle,9,false,[.86,.88,.9]);
+  y=121;
+ }
+ function pageFooter(){
+  line(M,805,RIGHT,805);
+  text(M,820,'ENTRADA CONTROL  |  LS SISTEMAS',8,false,muted);
+ }
+ function newPage(label){page();header(label)}
+ function section(title){
+  text(M,y,title,12,true,ink);y+=12;line(M,y+1,RIGHT,y+1,[.84,.86,.89]);y+=18;
+ }
+ function infoRow(name,value,x,colw=258){
+  text(x,y,name,8,false,muted);
+  text(x,y+17,value,11,true,ink);
+ }
+ const generated=new Date();
+ header('Noche '+String(night.night||''));
+ section('DATOS DE LA NOCHE');
+ infoRow('Fecha de la noche',night.night||'Sin fecha',M);
+ infoRow('Informe generado',`${localDate(generated)} - ${localTime(generated)} h`,315);
+ y+=43;
+ const first=entries.length?entries[0]:null,last=entries.length?entries[entries.length-1]:null;
+ infoRow('Primer movimiento',first?`${localDate(first.time)} - ${localTime(first.time)} h`:'Sin movimientos',M);
+ infoRow('Último movimiento',last?`${localDate(last.time)} - ${localTime(last.time)} h`:'Sin movimientos',315);
+ y+=45;
+ section('RESUMEN GENERAL');
+ const boxes=[
+  ['PERSONAS INGRESADAS',String(sum.people)],
+  ['RECAUDACIÓN EN PUERTA',fmt(sum.total)],
+  ['PERSONAS QUE PAGARON',String(sum.paid)],
+  ['ENTRADAS GRATIS',String(sum.free)]
+ ];
+ for(let i=0;i<4;i++){
+  const x=M+(i%2)*265,top=y+Math.floor(i/2)*62;
+  rect(x,top,252,54,pale);rect(x,top,3,54,gold);
+  text(x+12,top+17,boxes[i][0],8,true,muted);
+  text(x+12,top+39,boxes[i][1],16,true,ink);
+ }
+ y+=139;
+ section('DETALLE POR TIPO DE ENTRADA');
+ const cols=[M+8,M+178,M+268,M+360];
+ rect(M,y-10,RIGHT-M,28,ink);
+ text(cols[0],y+8,'TIPO',9,true,[1,1,1]);text(cols[1],y+8,'PERSONAS',9,true,[1,1,1]);text(cols[2],y+8,'REGISTROS',9,true,[1,1,1]);text(cols[3],y+8,'IMPORTE',9,true,[1,1,1]);y+=24;
+ for(const method of ['Efectivo','Transferencia','Anticipada','Gratis']){
+  const v=sum.categories[method];rect(M,y-2,RIGHT-M,31,method==='Anticipada'?[1,.97,.89]:pale);
+  text(cols[0],y+14,method,10,true);text(cols[1],y+14,v.people,10);text(cols[2],y+14,v.operations,10);
+  text(cols[3],y+14,method==='Anticipada'?'Ya cobradas':fmt(v.amount),10,method==='Efectivo'||method==='Transferencia');
+  y+=35;
+ }
+ text(cols[0],y+11,'TOTAL COBRADO EN PUERTA',10,true);text(cols[3],y+11,fmt(sum.total),11,true);y+=35;
+ rect(M,y,RIGHT-M,55,[.99,.96,.87]);
+ text(M+10,y+17,`Personas con anticipada: ${sum.advance}. No se suma su importe al cobro en puerta.`,9);
+ text(M+10,y+36,`Registros anulados: ${sum.voided}. Sus importes no cuentan en los totales.`,9);
+ y+=55;
+ newPage('Detalle de movimientos');
+ section('MOVIMIENTOS REGISTRADOS');
+ const xs=[M+6,M+37,M+100,M+144,M+239,M+288,M+364,M+449];
+ const tableHeader=()=>{
+  rect(M,y-12,RIGHT-M,27,ink);
+  ['N°','FECHA','HORA','TIPO','PERS.','PRECIO','IMPORTE','ESTADO'].forEach((t,i)=>text(xs[i],y+5,t,8,true,[1,1,1]));
+  y+=22;
+ };
+ tableHeader();
+ if(!entries.length){text(M+8,y+15,'No hubo movimientos registrados.',10,false,muted);y+=30}
+ entries.forEach((e,i)=>{
+  if(y+23>792){newPage('Detalle de movimientos');text(M,y+10,'CONTINUACIÓN DE MOVIMIENTOS',12,true);y+=34;tableHeader()}
+  if(i%2===0)rect(M,y-9,RIGHT-M,23,pale);
+  const values=[i+1,localDate(e.time),localTime(e.time),e.method||'-',e.qty||0,fmt(e.price),e.method==='Anticipada'?'Ya pagada':fmt(e.total),e.void?'ANULADO':'Válido'];
+  values.forEach((v,k)=>text(xs[k],y+5,v,k===3||k===6?8.2:8,k===7&&!!e.void,e.void?muted:ink));y+=23;
+ });
+ if(y+55>792){newPage('Resumen final')}
+ y+=13;line(M,y,RIGHT,y,[.79,.81,.84]);y+=22;
+ text(M,y,`Total: ${sum.people} personas / ${sum.ops} registros válidos / ${sum.voided} anulados.`,9,true);
+ y+=17;text(M,y,`Recaudación en puerta: ${fmt(sum.total)} (efectivo y transferencias).`,9,true);
+ // Pie en cada página y numeración.
+ page();
+ const result=pages.map((p,i)=>`${p}\n${color(muted)} rg BT /F1 8 Tf 1 0 0 1 499 22 Tm (Página ${i+1} de ${pages.length}) Tj ET\n${color([.85,.87,.9])} RG 0.7 w ${M} 36 m ${RIGHT} 36 l S\nBT /F1 8 Tf ${color(muted)} rg 1 0 0 1 ${M} 21 Tm (ENTRADA CONTROL - LS SISTEMAS) Tj ET`);
+ return binaryPDF(result);
+}
+function exportNightPdf(night){
+ try{
+  const pdf=buildNightPdf(night);
+  download(pdf,`Entrada_Control_Cierre_${dateFile(night.night)}.pdf`);
+  show('PDF A4 generado. Buscalo en Descargas.');
+  return true;
+ }catch(e){console.error('Error al generar PDF',e);show('No se pudo generar el PDF. No se borró nada.');return false}
+}
+$('pdfBtn').onclick=()=>exportNightPdf({night:state.night,entries:state.entries});
+$('newNight').onclick=()=>{
+ if(!state.entries.length){show('Todavía no hay entradas para cerrar.');return}
+ if(!confirm('¿Cerrar la noche? Se descargará el informe PDF A4 y los registros pasarán a Noches anteriores. Podrás volver a generar el PDF cuando quieras.'))return;
+ const prev=state;
+ const closed={night:state.night,entries:state.entries,closedAt:new Date().toISOString()};
+ let pdf;
+ try{pdf=buildNightPdf(closed)}catch(e){console.error(e);show('No se pudo preparar el PDF. No se cerró la noche.');return}
+ state={...state,entries:[],night:localDate(new Date()),archive:[...(state.archive||[]),closed]};
+ if(!save()){state=prev;return}
+ // Primero archiva los registros y luego descarga; si falla la descarga, se puede reintentar.
+ render();
+ try{download(pdf,`Entrada_Control_Cierre_${dateFile(closed.night)}.pdf`);show('Noche cerrada. PDF generado y enviado a Descargas.');}
+ catch(e){console.error(e);show('Noche archivada. Reintentá el PDF desde Noches anteriores.');}
+};
+load();
+</script>
+</body></html>
